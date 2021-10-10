@@ -85,6 +85,13 @@ NLD_CasesAfter14Days <- subset(NLD_CasesAfter14Days, 20200315 <= NLD_CasesAfter1
 NLD_CasesAfter14Days <- subset(NLD_CasesAfter14Days,  NLD_CasesAfter14Days$Date <= 20201214 )
 NLD_data2$CasesAfter14Days <- NLD_CasesAfter14Days$ConfirmedCases
 
+#Define control variable - population density
+#popdNLD <- rep(518,275)
+#NLD_data2$popd <- popdNLD
+#popdNRW <- rep(526,275)
+#NRW_data2$popd <- popdNRW
+
+
 ##### Linear Regression #####
 ######Load packages######
 library(ggplot2)
@@ -156,22 +163,25 @@ summary(rslt4NLD)
 summary(rslt4NRW)
 #Linear regression of NRW on C3, C8 and H6: CasesAfter14Days = -679.75 + 2136.09*C3 - 761.29*C8 + 27.75*H6
 #insignificant result for alpha and beta3; significant results for beta 1 and beta 2
+stargazer(rslt4NLD, rslt4NRW, column.labels = c("Netherlands","North Rhine-Westphalia"),type="text")
 
 ######Goodness-of-fit######
-#NLD
-stargazer(rslt1NLD,rslt2NLD,rslt3NLD,rslt4NLD, type="text")
-#NLD's model adjusted R^2 of model4 is 0.407
-
-#NRW
-stargazer(rslt1NRW,rslt2NRW,rslt3NRW,rslt4NRW, type="text")
+#NLD's model adjusted R^2 of model4 is 0.40 
 #NRW's model adjusted R^2 of model4 is only 0.045
+
+#modelControl
+#mdlcNLD <- NLD_data2$CasesAfter14Days ~ NLD_data2$C3 + NLD_data2$C8 + NLD_data2$H6 + NLD_data2$popd
+#mdlcNRW <- NRW_data2$CasesAfter14Days ~ NRW_data2$C3 + NRW_data2$C8 + NRW_data2$H6 + NRW_data2$popd
+#rsltcNLD <- lm(mdlcNLD, data=NLD_data2)
+#rsltcNRW <- lm(mdlcNRW, data=NRW_data2)
+#stargazer(rsltcNLD,rsltcNRW, column.labels=c("Netherlands","North Rhine-Westphalia"), type="text")
 
 ######Normality test######
 #NLD
 caseNLD_hist <- ggplot(NLD_data2,aes(CasesAfter14Days))
-caseNLD_hist + geom_histogram() + labs(title="NLD",x="Cases after 14 days",y="Frequency")
+caseNLD_hist + geom_histogram() + labs(title="Netherlands",x="Cases after 14 days",y="Frequency")
 #the histogram shows that the NLD case distribution is right skewed
-qq.plot.caseNLD_hist <- qplot(sample=NLD_data2$CasesAfter14Days,stat="qq",main="NLD QQ plot",xlab="Theoretical quantiles",ylab="Sample quantiles")
+qq.plot.caseNLD_hist <- qplot(sample=NLD_data2$CasesAfter14Days,stat="qq",main="Netherlands QQ plot",xlab="Theoretical quantiles",ylab="Sample quantiles")
 qq.plot.caseNLD_hist
 #The Q-Q plot shows that the NLD distribution has heavy tails, especially on the left
 shapiro.test(NLD_data2$CasesAfter14Days)
@@ -179,9 +189,9 @@ shapiro.test(NLD_data2$CasesAfter14Days)
 
 #NRW
 caseNRW_hist <- ggplot(NRW_data2,aes(CasesAfter14Days))
-caseNRW_hist + geom_histogram() + labs(title="NRW",x="Cases after 14 days",y="Frequency")
+caseNRW_hist + geom_histogram() + labs(title="North Rhine-Westphalia",x="Cases after 14 days",y="Frequency")
 #the histogram shows that the case distribution is right skewed
-qq.plot.caseNRW_hist <- qplot(sample=NRW_data2$CasesAfter14Days,stat="qq",main="NRW QQ plot",xlab="Theoretical quantiles",ylab="Sample quantiles")
+qq.plot.caseNRW_hist <- qplot(sample=NRW_data2$CasesAfter14Days,stat="qq",main="North Rhine-Westphalia QQ plot",xlab="Theoretical quantiles",ylab="Sample quantiles")
 qq.plot.caseNRW_hist
 #The Q-Q plot shows that the NRW distribution has heavy tails, especially on the left
 shapiro.test(NRW_data2$CasesAfter14Days)
